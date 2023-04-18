@@ -5,18 +5,30 @@ namespace Education.Persistence
 {
     public class EducationDbContext : DbContext
     {
+        public EducationDbContext() { }
+
         public EducationDbContext(DbContextOptions<EducationDbContext> options) : base(options) { }
 
-        public DbSet<Curso> Cursos { get; set; }
+        public DbSet<Course> Courses { get; set; }
+
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            base.OnConfiguring(optionsBuilder);
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;database=Education;Trusted_Connection=True;MultipleActiveResultSets=True;");
+            }
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Curso>()
+            modelBuilder.Entity<Course>()
                 .Property(x => x.Price)
                 .HasPrecision(14, 2);
 
-            modelBuilder.Entity<Curso>().HasData(
-                new Curso
+            modelBuilder.Entity<Course>().HasData(
+                new Course
                 {
                     CourseId = Guid.NewGuid(),
                     Description = "C# basic course",
@@ -25,7 +37,7 @@ namespace Education.Persistence
                     PublishDate = DateTime.Now.AddYears(2),
                     Price = 56
                 },
-                new Curso
+                new Course
                 {
                     CourseId = Guid.NewGuid(),
                     Description = "Java course",
@@ -34,7 +46,7 @@ namespace Education.Persistence
                     PublishDate = DateTime.Now.AddYears(2),
                     Price = 25
                 },
-                new Curso
+                new Course
                 {
                     CourseId = Guid.NewGuid(),
                     Description = ".NET Core Unit test course",

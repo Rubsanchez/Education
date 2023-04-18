@@ -2,7 +2,7 @@
 
 namespace Education.Domain
 {
-    public class Curso
+    public class Course
     {
         [Key]
         public Guid CourseId { get; set; }
