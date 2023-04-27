@@ -7,7 +7,7 @@ namespace Education.Application.Courses
 {
     public class CreateCourseCommand
     {
-        public class CreateCourseCommandRequest : IRequest 
+        public class CreateCourseCommandRequest : IRequest<Unit>
         {
             public string Title { get; set; }
             public string Description { get; set; }
@@ -15,7 +15,7 @@ namespace Education.Application.Courses
             public decimal Price { get; set; }
         }
 
-        public class CreateCourseCommandRequestValidation : AbstractValidator<CreateCourseCommandRequest> 
+        public class CreateCourseCommandRequestValidation : AbstractValidator<CreateCourseCommandRequest>
         {
             public CreateCourseCommandRequestValidation()
             {
@@ -24,7 +24,7 @@ namespace Education.Application.Courses
             }
         }
 
-        public class CreateCourseCommandHandler : IRequestHandler<CreateCourseCommandRequest>
+        public class CreateCourseCommandHandler : IRequestHandler<CreateCourseCommandRequest, Unit>
         {
             private readonly EducationDbContext _context;
 
@@ -33,7 +33,7 @@ namespace Education.Application.Courses
                 _context = context;
             }
 
-            public async Task Handle(CreateCourseCommandRequest request, CancellationToken cancellationToken)
+            public async Task<Unit> Handle(CreateCourseCommandRequest request, CancellationToken cancellationToken)
             {
                 var course = new Course
                 {
@@ -48,11 +48,12 @@ namespace Education.Application.Courses
                 _context.Add(course);
 
                 var res = await _context.SaveChangesAsync();
-                if (res <= 0)
+                if (res > 0)
                 {
-                    throw new Exception("Course cannot be inserted");                   
+                    return Unit.Value;
                 }
 
+                throw new Exception("Course cannot be inserted");
             }
         }
     }
